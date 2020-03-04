@@ -78,7 +78,7 @@ func runInit(cmd *command) error {
 	}()
 
 	// Make sure gobind is up to date.
-	if err := goInstall([]string{"golang.org/x/mobile/cmd/gobind"}, nil); err != nil {
+	if err := goInstall([]string{"github.com/provpn/mobile/cmd/gobind"}, nil); err != nil {
 		return err
 	}
 
@@ -209,9 +209,9 @@ func installOpenAL(gomobilepath string) error {
 }
 
 var commonPkgs = []string{
-	"golang.org/x/mobile/gl",
-	"golang.org/x/mobile/app",
-	"golang.org/x/mobile/exp/app/debug",
+	"github.com/provpn/mobile/gl",
+	"github.com/provpn/mobile/app",
+	"github.com/provpn/mobile/exp/app/debug",
 }
 
 func mkdir(dir string) error {

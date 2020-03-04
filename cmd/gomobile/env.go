@@ -22,7 +22,7 @@ var (
 	androidArmNM string
 	darwinArmNM  string
 
-	allArchs = []string{"arm", "arm64", "386", "amd64"}
+	allArchs = []string{"arm", "arm64", "386", "amd64", "x86"}
 
 	bitcodeEnabled bool
 )
@@ -146,6 +146,10 @@ func envInit() (err error) {
 		case "386", "amd64":
 			clang, cflags, err = envClang("iphonesimulator")
 			cflags += " -mios-simulator-version-min=" + buildIOSVersion
+		case "x86":
+			arch = "amd64"
+			clang, cflags, err = envClang("macosx")
+			cflags += " -mmacosx-version-min=10.13"
 		default:
 			panic(fmt.Errorf("unknown GOARCH: %q", arch))
 		}
@@ -226,6 +230,8 @@ func archClang(goarch string) string {
 	case "386":
 		return "i386"
 	case "amd64":
+		return "x86_64"
+	case "x86":
 		return "x86_64"
 	default:
 		panic(fmt.Sprintf("unknown GOARCH: %q", goarch))

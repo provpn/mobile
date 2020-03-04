@@ -11,13 +11,13 @@ import (
 	"log"
 	"net"
 
-	"golang.org/x/mobile/app"
-	"golang.org/x/mobile/app/internal/apptest"
-	"golang.org/x/mobile/event/lifecycle"
-	"golang.org/x/mobile/event/paint"
-	"golang.org/x/mobile/event/size"
-	"golang.org/x/mobile/event/touch"
-	"golang.org/x/mobile/gl"
+	"github.com/provpn/mobile/app"
+	"github.com/provpn/mobile/app/internal/apptest"
+	"github.com/provpn/mobile/event/lifecycle"
+	"github.com/provpn/mobile/event/paint"
+	"github.com/provpn/mobile/event/size"
+	"github.com/provpn/mobile/event/touch"
+	"github.com/provpn/mobile/gl"
 )
 
 func main() {

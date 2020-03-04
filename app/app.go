@@ -7,10 +7,10 @@
 package app
 
 import (
-	"golang.org/x/mobile/event/lifecycle"
-	"golang.org/x/mobile/event/size"
-	"golang.org/x/mobile/gl"
-	_ "golang.org/x/mobile/internal/mobileinit"
+	"github.com/provpn/mobile/event/lifecycle"
+	"github.com/provpn/mobile/event/size"
+	"github.com/provpn/mobile/gl"
+	_ "github.com/provpn/mobile/internal/mobileinit"
 )
 
 // Main is called by the main.main function to run the mobile application.
@@ -30,7 +30,7 @@ type App interface {
 	//  - paint.Event
 	//  - size.Event
 	//  - touch.Event
-	// from the golang.org/x/mobile/event/etc packages. Other packages may
+	// from the github.com/provpn/mobile/event/etc packages. Other packages may
 	// define other event types that are carried on this channel.
 	Events() <-chan interface{}
 

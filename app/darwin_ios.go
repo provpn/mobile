@@ -30,11 +30,11 @@ import (
 	"strings"
 	"sync"
 
-	"golang.org/x/mobile/event/lifecycle"
-	"golang.org/x/mobile/event/paint"
-	"golang.org/x/mobile/event/size"
-	"golang.org/x/mobile/event/touch"
-	"golang.org/x/mobile/geom"
+	"github.com/provpn/mobile/event/lifecycle"
+	"github.com/provpn/mobile/event/paint"
+	"github.com/provpn/mobile/event/size"
+	"github.com/provpn/mobile/event/touch"
+	"github.com/provpn/mobile/geom"
 )
 
 var initThreadID uint64
