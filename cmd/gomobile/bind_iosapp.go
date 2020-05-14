@@ -57,6 +57,10 @@ func goIOSBind(gobind string, pkgs []*packages.Package, archs []string) error {
 	cmd = exec.Command("xcrun", "lipo", "-create")
 
 	for _, arch := range archs {
+		if arch == "x86" {
+			arch = "amd64"
+		}
+
 		if err := writeGoMod("darwin", arch); err != nil {
 			return err
 		}
