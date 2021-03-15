@@ -38,14 +38,19 @@ func goIOSBind(gobind string, pkgs []*packages.Package, archs []string) error {
 
 	srcDir := filepath.Join(tmpdir, "src", "gobind")
 
-	name := pkgs[0].Name
-	title := strings.Title(name)
-
-	if buildO != "" && !strings.HasSuffix(buildO, ".framework") {
-		return fmt.Errorf("static framework name %q missing .framework suffix", buildO)
-	}
+	var name string
+	var title string
 	if buildO == "" {
+		name = pkgs[0].Name
+		title = strings.Title(name)
 		buildO = title + ".framework"
+	} else {
+		if !strings.HasSuffix(buildO, ".framework") {
+			return fmt.Errorf("static framework name %q missing .framework suffix", buildO)
+		}
+		base := filepath.Base(buildO)
+		name = base[:len(base)-len(".framework")]
+		title = strings.Title(name)
 	}
 
 	fileBases := make([]string, len(pkgs)+1)
@@ -55,6 +60,11 @@ func goIOSBind(gobind string, pkgs []*packages.Package, archs []string) error {
 	fileBases[len(fileBases)-1] = "Universe"
 
 	cmd = exec.Command("xcrun", "lipo", "-create")
+
+	modulesUsed, err := areGoModulesUsed()
+	if err != nil {
+		return err
+	}
 
 	for _, arch := range archs {
 		if arch == "x86" {
@@ -69,6 +79,15 @@ func goIOSBind(gobind string, pkgs []*packages.Package, archs []string) error {
 		// Add the generated packages to GOPATH for reverse bindings.
 		gopath := fmt.Sprintf("GOPATH=%s%c%s", tmpdir, filepath.ListSeparator, goEnv("GOPATH"))
 		env = append(env, gopath)
+
+		// Run `go mod tidy` to force to create go.sum.
+		// Without go.sum, `go build` fails as of Go 1.16.
+		if modulesUsed {
+			if err := goModTidyAt(filepath.Join(tmpdir, "src"), env); err != nil {
+				return err
+			}
+		}
+
 		path, err := goIOSBindArchive(name, env, filepath.Join(tmpdir, "src"))
 		if err != nil {
 			return fmt.Errorf("darwin-%s: %v", arch, err)
@@ -144,11 +163,10 @@ func goIOSBind(gobind string, pkgs []*packages.Package, archs []string) error {
 	if err := symlink("Versions/Current/Resources", buildO+"/Resources"); err != nil {
 		return err
 	}
-	err := writeFile(buildO+"/Resources/Info.plist", func(w io.Writer) error {
+	if err := writeFile(buildO+"/Resources/Info.plist", func(w io.Writer) error {
 		_, err := w.Write([]byte(iosBindInfoPlist))
 		return err
-	})
-	if err != nil {
+	}); err != nil {
 		return err
 	}
 

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build darwin || linux || windows
 // +build darwin linux windows
 
 package glutil // import "github.com/provpn/mobile/exp/gl/glutil"
