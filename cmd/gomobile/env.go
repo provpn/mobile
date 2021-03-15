@@ -27,6 +27,8 @@ var (
 
 func allArchs(targetOS string) []string {
 	switch targetOS {
+	case "darwin":
+		return []string{"arm64", "amd64"}
 	case "ios":
 		return []string{"arm64", "amd64"}
 	case "android":
@@ -152,10 +154,6 @@ func envInit() (err error) {
 		case "amd64":
 			clang, cflags, err = envClang("iphonesimulator")
 			cflags += " -mios-simulator-version-min=" + buildIOSVersion
-		case "x86":
-			arch = "amd64"
-			clang, cflags, err = envClang("macosx")
-			cflags += " -mmacosx-version-min=10.13"
 		default:
 			panic(fmt.Errorf("unknown GOARCH: %q", arch))
 		}
@@ -166,6 +164,30 @@ func envInit() (err error) {
 		if bitcodeEnabled {
 			cflags += " -fembed-bitcode"
 		}
+		env = append(env,
+			"GOOS=darwin",
+			"GOARCH="+arch,
+			"CC="+clang,
+			"CXX="+clang+"++",
+			"CGO_CFLAGS="+cflags+" -arch "+archClang(arch),
+			"CGO_CXXFLAGS="+cflags+" -arch "+archClang(arch),
+			"CGO_LDFLAGS="+cflags+" -arch "+archClang(arch),
+			"CGO_ENABLED=1",
+		)
+		darwinEnv[arch] = env
+	}
+
+	for _, arch := range allArchs("darwin") {
+		var env []string
+		var clang, cflags string
+
+		clang, cflags, err = envClang("macosx")
+		cflags += " -mmacosx-version-min=10.14"
+		
+		if bitcodeEnabled {
+			cflags += " -fembed-bitcode"
+		}
+		
 		env = append(env,
 			"GOOS=darwin",
 			"GOARCH="+arch,
